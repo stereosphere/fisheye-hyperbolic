@@ -218,10 +218,10 @@
 	 (format t " done~%~%"))
     (sb-posix:chdir #p"/home/michael/SVG-FRAMES/Anim0")
     (convert-to-png root-name) 
-    (print (concatenate 'string "/usr/bin/avconv" 
-			"-r" "30"
-			"-i" avconv-filename 
-			"-b:v" "3000k" 
+    (print (concatenate 'string "/usr/bin/avconv " 
+			"-r " "30 "
+			"-i " avconv-filename 
+			"-b:v " "3000k " 
 			(concatenate 'string "../" root-name ".avi")))
     (when (probe-file (format nil "/home/michael/SVG-FRAMES/~a.avi" root-name))
       (print 'deleting-old-avi)
