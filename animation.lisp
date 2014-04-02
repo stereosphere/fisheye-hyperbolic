@@ -10,7 +10,7 @@
 (defmethod MAKE-TRANSLATING-H-LINES ((dir complex) (hdist double-float))
   (let* ((hla (make-h-line #c(0.0 0.0) dir)) 
          (dir90 (/ (dcomplex (- (imagpart dir)) (realpart dir)) (abs dir)))
-         (edist (realpart (h-e hdist)))
+         (edist (realpart (h-e hdist)));;imagpart will be zero
          (hlb (make-h-line-through-point (* dir90 edist))))
     ;;(print edist)
     (values hla hlb)))

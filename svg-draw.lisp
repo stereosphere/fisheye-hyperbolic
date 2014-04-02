@@ -95,7 +95,8 @@
 	   ;;    for i from 0
 	   ;;    do
 	   ;; 	(svg-text stream x y (format nil "~d" i)))
-	   ))))
+	   )
+      (dome-matte stream))))
 ;;	 (fhp (make-fundamental-hp p q)))
 
 
@@ -163,6 +164,31 @@
 			 :if-exists :supersede 
 			 :if-does-not-exist :create)
       (svg-hyperbolic-tiling out hp-list)))) 
+
+;;;-------------------------------------------------------------------------         
+(defun FILE-W (hp-list)
+  (declare (special *ssize/2*))
+  (let ((*ssize/2* 400))
+    (unless (consp hp-list)
+      (list hp-list))
+    (loop for hp in hp-list
+       for color from 0 by (truncate 255 (length hp-list))
+       do
+	 (setf (getf (properties hp) :style) (svg-color color (random 255) (random 255))));;color color color)))
+    (let* ((name (cond ((= (p (first hp-list)) 4)
+			"test46")
+		       ((= (p (first hp-list)) 6)
+			"test64")
+		       (t
+			"test")))
+	   (path (format nil 
+			 "C:/EMACS-SBCL/SVG-FRAMES/~a.svg" name)))
+      (format t "~&writing svg file")
+      (with-open-file (out path
+			   :direction :output 
+			   :if-exists :supersede 
+			   :if-does-not-exist :create)
+	(svg-hyperbolic-tiling out hp-list)))))
 
 ;;;-------------------------------------------------------------------------
 (defmethod SVG-DRAW-POINT-LISTS (stream point-lists)
@@ -237,6 +263,15 @@
 ;;;-------------------------------------------------------------------------         
 (defun FILE-3D (point-lists)
   (let ((path (format nil "/home/michael/SVG-FRAMES/3d-test.svg")))
+    (format t "~&writing svg file")
+    (with-open-file (out path
+			 :direction :output 
+			 :if-exists :supersede 
+			 :if-does-not-exist :create)
+      (svg-draw-point-lists out point-lists))))
+;;;-------------------------------------------------------------------------         
+(defun FILE-3D-W (point-lists)
+  (let ((path (format nil "c:/EMACS-SBCL/SVG-FRAMES/3d-test.svg")))
     (format t "~&writing svg file")
     (with-open-file (out path
 			 :direction :output 

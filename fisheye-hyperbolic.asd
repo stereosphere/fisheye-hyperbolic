@@ -21,4 +21,7 @@
 	       (:file "debug-functions")
 	       (:file "on-dome")
 	       (:file "clocks")   
-	       (:file "orthogonal-circles")))
+	       (:file "orthogonal-circles")
+	       (:file "new-svg-draw")
+	       (:file "output")
+))
