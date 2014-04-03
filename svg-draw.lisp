@@ -22,9 +22,12 @@
  
 
 ;;;-------------------------------------------------------------------------
-(defmethod GET-POLYGON-POINTS (hp)
- (let* ((points (loop for el across (equi-lines hp)
-		  append (arc-points-svg el)))
+(defmethod GET-POLYGON-POINTSx (hp &optional do-hl)
+ (let* ((points (if do-hl 
+		    (loop for hl across (h-lines hp)
+		       append (arc-points-svg hl)) 
+		    (loop for el across (equi-lines hp)
+		       append (arc-points-svg el))))
 	(coords (loop for (x y) on points by #'cddr
 		   append (list (+ x 1.0)
 				(+ y 1.0)))))
@@ -69,7 +72,7 @@
       (background stream 255 255 255)
       (loop for hp in hp-list
 	 ;;for line-coords = (get-h-line-points (get-line hp (first-edge hp)))
-	 for coords = (get-polygon-points hp)
+	 for coords = (get-polygon-pointsx hp t)
 	 ;;for coords = (get-polygon-equi-az-points hp) 
 	 ;;for center = (to-equi-az (center hp))
 	 for style-property = (getf (properties hp) :style)

@@ -350,7 +350,7 @@
 
 ;;;-----------------------------------------------------------------
 ;;;Takes a point and makes two h-lines that will translate the
-;;;distance magnitude of p in the  direction of p
+;;;distance magnitude of p in he  direction of p
 (defmethod MAKE-TRANSLATER ((a complex))
   (let* ((dir90 (/ (complex (- (imagpart a)) (realpart a)) 2.0))
          (hla (make-h-line #c(0.0 0.0) dir90));;;!!!!!!make-h-line may be nil
@@ -400,7 +400,7 @@
   (let* ((fhp (make-fundamental-hp p q))
 	 (hpt (first (get-points fhp)))
 	 (dir (/ hpt (abs hpt)))
-	 (dist (/ (abs (h-e (radius fhp))) 1.0)))
+	 (dist (/ (abs (identity (radius fhp))) 1.0)))
     (multiple-value-bind (hla hlb) 
 	(make-translating-h-lines dir dist)
       (print dist)
