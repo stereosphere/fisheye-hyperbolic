@@ -24,4 +24,4 @@
 	       (:file "orthogonal-circles")
 	       (:file "new-svg-draw")
 	       (:file "output")
-))
+	       (:file "tiling")))

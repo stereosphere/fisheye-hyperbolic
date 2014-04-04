@@ -31,6 +31,15 @@
 (defmethod SVG-DRAW ((line svg-polyline-item) stream)
   (polyline stream (complex-list-to-xy-list (points line)) :r 192 :g 45 :b 92))
 
+;;;----------------------------------------------------------------------
+(defclass SVG-HP-LIST ()
+  ((color :initarg :color :accessor color)
+   (hps :initarg :hps :accessor hps)))
+
+
+;;;----------------------------------------------------------------------
+(defmethod SVG-DRAW ((hp-list svg-hp-list) stream)
+  (svg-hyperbolic-tiling (hps hp-list) stream))
 
 
 ;;;-------------------------------------------------------------------------
@@ -44,8 +53,11 @@
 
 ;;;---------------------------------------------------------------------------
 (defun TEST-NEW-SVG ()
-  (let* ((p0 (make-instance 'svg-path-item :style (svg-color 60 60 60) :points '(#c(0.0 0.0) #c(.5 .5) #c(0.0 .5))))
-	 (l0 (make-instance 'svg-polyline-item :points '(#c(0.0 0.0) #c(0.8 0.8) #c(0.0 .5))))
+  (let* ((p0 (make-instance 'svg-path-item 
+			    :style (svg-color 60 60 60) 
+			    :points '(#c(0.0 0.0) #c(.5 .5) #c(0.0 .5))))
+	 (l0 (make-instance 'svg-polyline-item 
+			    :points '(#c(0.0 0.0) #c(0.8 0.8) #c(0.0 .5))))
 	 (path (format nil "/home/michael/SVG-FRAMES/new-svg-test.svg")))
     (format t "~&writing svg file")
     (with-open-file (out path
@@ -53,3 +65,17 @@
 			 :if-exists :supersede 
 			 :if-does-not-exist :create)
       (svg-draw-items out (list p0 l0))))) 
+
+;;;-------------------------------------------------------------------------         
+(defun FILE-Wx (item-list)
+  (declare (special *ssize/2*))
+  (let ((*ssize/2* 400))
+    (let* ((name "test")
+	   (path (format nil 
+			 "C:/EMACS-SBCL/SVG-FRAMES/~a.svg" name)))
+      (format t "~&writing item-list svg file")
+      (with-open-file (stream path
+			   :direction :output 
+			   :if-exists :supersede 
+			   :if-does-not-exist :create)
+	(svg-draw-items stream item-list)))))

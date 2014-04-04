@@ -102,6 +102,19 @@
       (dome-matte stream))))
 ;;	 (fhp (make-fundamental-hp p q)))
 
+;;;-------------------------------------------------------------------------
+(defmethod SVG-HYPERBOLIC-TILING ((hp-list cons) stream)
+  (let ((default-style (svg-color 80 80 80)))
+    (loop for hp in hp-list
+       for coords = (get-polygon-pointsx hp t)
+       for style-property = (getf (properties hp) :style)
+       for sty = (cond (style-property
+			style-property)
+		       (t
+			default-style))
+	 do
+	   (svg-path stream coords sty))))
+
 
 
 

@@ -98,3 +98,6 @@
     (print (get-points hpa))
     (file-w (list hpb hpa))))
 
+(defun XXX (dist p)
+  (multiple-value-bind (hla hlb) (make-translating-h-linesx #c(1.0 0.0) dist)
+    (translate-point p hla hlb)))
