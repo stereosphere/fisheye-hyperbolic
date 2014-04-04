@@ -139,10 +139,10 @@
 
 
 ;;;-----------------------------------------------------------------------
-(defun SVG-TEXT (stream xx yy string)
+(defun SVG-TEXT (stream xx yy color string &optional (r 255) (g 0) (b 0))
   (let ((x (* *ssize/2* xx))
 	(y (* *ssize/2* yy))
-	(sty "fill:rgb(255, 0, 0);font-size 24px"))
+	(sty (format nil "fill:rgb(~a, ~a, ~q);font-size 24px") r g b))
     (tag stream text (x x y y style sty) (format stream "~a" string))))
 
 ;;;-----------------------------------------------------------------------

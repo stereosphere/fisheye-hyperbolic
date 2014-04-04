@@ -32,14 +32,25 @@
   (polyline stream (complex-list-to-xy-list (points line)) :r 192 :g 45 :b 92))
 
 ;;;----------------------------------------------------------------------
-(defclass SVG-HP-LIST ()
+(defclass SVG-HP-LIST-ITEM ()
   ((color :initarg :color :accessor color)
    (hps :initarg :hps :accessor hps)))
 
 
 ;;;----------------------------------------------------------------------
-(defmethod SVG-DRAW ((hp-list svg-hp-list) stream)
+(defmethod SVG-DRAW ((hp-list svg-hp-list-item) stream)
   (svg-hyperbolic-tiling (hps hp-list) stream))
+
+;;;----------------------------------------------------------------------
+(defclass SVG-TEXT-ITEM ()
+  ((x :initarg :x :accessor x)
+   (y :initarg :y :accessor y)
+   (label :initarg :label :accessor label)))
+
+;;;----------------------------------------------------------------------
+(defmethod SVG-DRAW ((text svg-text-item) stream)
+  (with-slots (x y label) text
+    (svg-text stream x y label)))
 
 
 ;;;-------------------------------------------------------------------------
