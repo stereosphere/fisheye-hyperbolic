@@ -65,6 +65,17 @@
     hl-points))
 
 ;;;-------------------------------------------------------------------------
+;;; works on equi-line or h-line
+(defun GET-H-LINE-POINTSx (hl)
+   (let* ((points (arc-points-svg hl))
+	  (coords (loop for (x y) on points by #'cddr
+		     append (list x y)))
+	  (hl-points (loop for (x y) on coords by #'cddr
+			for z = (to-equi-az1 (complex x y))
+			collect (+ z #c(1.0 1.0)))))
+    hl-points))
+
+;;;-------------------------------------------------------------------------
 (defmethod SVG-HYPERBOLIC-TILING (stream hp-list)
   (let* ((cw-style (svg-color 96 96 96))
 	 (ccw-style (svg-color 128 0 0)))

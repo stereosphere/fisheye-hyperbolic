@@ -104,7 +104,7 @@
 (defun POLYLINE (stream point-list &key (r 0) (g 0) (b 0))
   (let* ((str (make-array '(0) :element-type 'base-char
 			  :fill-pointer 0 :adjustable t))
-	 (style (princ-to-string (format nil "stroke:rgb(~d,~d,~d); fill:none; stroke-width:8" r g b))))
+	 (style (princ-to-string (format nil "stroke:rgb(~d,~d,~d); fill:none; stroke-width:1" r g b))))
     (with-output-to-string (s str)    
       (loop for (xx yy eol) on point-list by #'cddr
 	 for x = (* *ssize/2* xx)

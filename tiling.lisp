@@ -100,4 +100,13 @@
 
 (defun XXX (dist p)
   (multiple-value-bind (hla hlb) (make-translating-h-linesx #c(1.0 0.0) dist)
-    (translate-point p hla hlb)))
+    (describe hla)
+    (describe hlb)
+    (FILE-WX (make-item-list hla hlb))
+    (let* ((xx (reflect (reflect p hlb) hla))
+	  (hp (e-h p))
+	  (hxx (e-h xx)))
+      (print (list p xx hp hxx))
+      (print (- hp hxx))
+      (print (reflect #c(0.0 -0.8) hlb)))))
+  

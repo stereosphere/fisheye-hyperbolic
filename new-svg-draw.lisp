@@ -77,6 +77,26 @@
 			 :if-does-not-exist :create)
       (svg-draw-items out (list p0 l0))))) 
 
+
+(defun MAKE-ITEM-LIST (hla hlb)
+   (let* ((a-coords (get-h-line-pointsx hla))
+	  (b-coords (get-h-line-pointsx hlb))
+	  (a-poly (make-instance 'svg-polyline-item 
+				 :points a-coords))
+	  (b-poly (make-instance 'svg-polyline-item 
+				 :points b-coords))
+	  (hpl (make-instance 'svg-hp-list 
+			      :hps (first-layer 4 6) 
+			      :color (svg-color 60 60 60))))
+     (print a-coords)
+     (print b-coords)
+     (list hpl a-poly b-poly)))
+
+ 
+  
+
+
+
 ;;;-------------------------------------------------------------------------         
 (defun FILE-Wx (item-list)
   (declare (special *ssize/2*))
