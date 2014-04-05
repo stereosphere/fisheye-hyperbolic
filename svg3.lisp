@@ -6,7 +6,7 @@
 ;; the size should be the maximum contemplated. The bitmap output from 
 ;;inkscape can be scaled down to the desired size without compromising
 ;;quality
-(defparameter *ssize* 4096)
+(defparameter *ssize* 800);;4096)
 (defparameter *ssize/2* (/ *ssize* 2))
 
 ;;;-------------------------------------------------------------------------
@@ -94,7 +94,7 @@
 
 ;;;-------------------------------------------------------------------------
 ;;(format nil "~{~&~a ~a ~a~}" '(m 1 2 l 3 4 l 5 6 l 7 8))
-;;(loop with  x = 'm repeat 5 do (print x) (setf x 'l))
+ ;;(loop with  x = 'm repeat 5 do (print x) (setf x 'l))
 (defun POLYGON (stream point-list &key (r 0) (g 0) (b 0))
   (let ((sty (format nil "fill:rgb(~a, ~a, ~a)" r g b)))
     (tag stream polygon (points  (format nil "~{~a,~a ~}" point-list)         
@@ -139,11 +139,19 @@
 
 
 ;;;-----------------------------------------------------------------------
-(defun SVG-TEXT (stream xx yy color string &optional (r 255) (g 0) (b 0))
-  (let ((x (* *ssize/2* xx))
-	(y (* *ssize/2* yy))
-	(sty (format nil "fill:rgb(~a, ~a, ~q);font-size 24px") r g b))
+(defun SVG-TEXT (stream xx yy string &optional (r 255) (g 0) (b 0))
+  (let ((x   (* *ssize/2* xx))
+	(y   (* *ssize/2* yy))
+	(sty (format nil "fill:rgb(~a, ~a, ~a);font-size 24px" r g b)))
     (tag stream text (x x y y style sty) (format stream "~a" string))))
+
+;;;-----------------------------------------------------------------------
+;;;coords come in origin in center, so add 1.0 to x and y
+(defun SVG-CIRCLE (stream xx yy radius &optional (r 255) (g 0) (b 0))
+  (let ((x   (* *ssize/2* (+ xx 1.0)))
+	(y   (* *ssize/2* (+ yy 1.0)))
+	(sty (format nil "fill:rgb(~a, ~a, ~a)" r g b)))
+    (tag stream circle (cx x cy y r radius style sty))))
 
 ;;;-----------------------------------------------------------------------
 (defun DOME-MATTE (stream)

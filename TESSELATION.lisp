@@ -329,8 +329,9 @@
       (destructuring-bind (px py dx dy) (dismember (e-point hl) (e-direction hl))
         (let* ((dif (- r (e-point hl)))
                (factor (* 2.0 (dot-product (e-direction hl) dif))))
-          (complex (+ (* 2.0 px) (* factor dx) (- rx))
-                   (+ (* 2.0 py) (* factor dy) (- ry)))))
+	  (print (list 'r r))
+          (print (complex (+ (* 2.0 px) (* factor dx) (- rx))
+                   (+ (* 2.0 py) (* factor dy) (- ry))))))
       ;;else it's a circle
       (let* ((dif (- r (e-center hl)))
              (radius (e-radius hl))

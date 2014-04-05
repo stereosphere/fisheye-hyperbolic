@@ -52,6 +52,17 @@
   (with-slots (x y label) text
     (svg-text stream x y label)))
 
+;;;----------------------------------------------------------------------
+(defclass SVG-CIRCLE-ITEM ()
+  ((x :initarg :x :accessor x)
+   (y :initarg :y :accessor y)
+   (r :initarg :r :accessor r)))
+
+
+;;;----------------------------------------------------------------------
+(defmethod SVG-DRAW ((text svg-circle-item) stream)
+  (with-slots (x y r) text
+    (svg-circle stream x y r)))
 
 ;;;-------------------------------------------------------------------------
 (defun SVG-DRAW-ITEMS (stream items)
@@ -77,7 +88,7 @@
 			 :if-does-not-exist :create)
       (svg-draw-items out (list p0 l0))))) 
 
-
+;;;-------------------------------------------------------------------------         
 (defun MAKE-ITEM-LIST (hla hlb)
    (let* ((a-coords (get-h-line-pointsx hla))
 	  (b-coords (get-h-line-pointsx hlb))
@@ -85,14 +96,18 @@
 				 :points a-coords))
 	  (b-poly (make-instance 'svg-polyline-item 
 				 :points b-coords))
-	  (hpl (make-instance 'svg-hp-list 
+	  (hpl (make-instance 'svg-hp-list-item 
 			      :hps (first-layer 4 6) 
-			      :color (svg-color 60 60 60))))
-     (print a-coords)
-     (print b-coords)
-     (list hpl a-poly b-poly)))
+			      :color (svg-color 60 60 60)))
+	  (circle (make-instance 'svg-circle-item :x 1.0 :y 1.0 :r 20)))
+   
+     (list hpl a-poly b-poly circle))) 
+   
 
- 
+;;;-------------------------------------------------------------------------         
+(defun TEST-ITEMS (&rest items)
+  ;;(multiple-value-bind (hla hlb) (make-translating-h-lines #c(1.0 0.0) 0.2)
+    (file-wx items))
   
 
 
