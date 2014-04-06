@@ -26,6 +26,14 @@
     ;;(print edist)
     (values hla hlb)))
 
+;;;---------------------------------------------------------------------------
+(defmethod MAKE-TRANSLATING-H-LINES-NEW ((dir complex) (dist double-float))
+  (let* ((hla (make-h-line #c(0.0 0.0) dir)) 
+         (dir90 (/ (dcomplex (- (imagpart dir)) (realpart dir)) (abs dir)))
+         (edist dist);;(realpart (h-e hdist)));;imagpart will be zero
+         (hlb (make-h-line-through-point (* dir90 edist))))
+    ;;(print edist)
+    (values hla hlb)))
 
 
 
