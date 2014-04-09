@@ -108,30 +108,50 @@
 
 ;;;---------
 (defun TRANSLATE-TO (ez eza ezb)
-  (let* ((hza   (/ 1.0 (e-h eza)))
-	 (hzb   (/ 1.0 (e-h ezb)))
+  (let* ((hza   (/ 1.0 (+ 1.0 eza)))
+	 (hzb   (/ 1.0 (+ 1.0 ezb)))
 	 (htr   (/ (- hzb hza) 2.0))
-	 (htran (+ (/ 1.0 (e-h ez)) htr)))
-    (print (list '(/ 1.0 (e-h ez)) (/ 1.0 (e-h ez))))
-    (print (list '(e-h eza) (e-h eza)))
-    (print (list '(e-h ezb) (e-h ezb)))
+	 
+	 (htran (+ (/ 1.0 (+ 1.0 ez) htr))))
+    (print (list '(/ 1.0 (+ 1.0 ez)) (/ 1.0 (+ 1.0 ez))))
     (print (list 'hza hza))
     (print (list 'hzb  hzb))
-    (print (list '(e-h ez) (e-h ez)))
+    (print (list 'ez ez))
+ 
+
     (print (list 'htran htran))
     (print (list 'htr htr))
     (print (list 'abshtr (abs htr)))
-    (print (list 'h-e-abs-htr (abs (h-e htr))))
-    (print (list '(/ 1.0 htran) (/ 1.0 htran)))
-    (print (list '(h-e (/ 1.0 htran)) (h-e (/ 1.0 htran))))
-    (print (list '(h-dist eza ezb) (h-dist eza ezb)))
-    (print (list '(h-dist (h-e (/ 1.0 htran)) ez) (h-dist (h-e (/ 1.0 htran)) ez))))
+    (print (list '(/ 1.0 (+ 1.0 htran)) (/ 1.0 (+ 1.0 htran)))))
   nil)
 
     
 (defun MAKE-TRANSLATORS (az bz cz dz)
   (values (make-h-line az bz)
 	  (make-h-line cz dz)))
+
+(defun INVERT-IN-CIRCLE (z q)
+  (let ((numerator (* (abs q) (abs q)))
+	(denom (- (conjugate z) (conjugate q))))
+    (print (list numerator denom))
+    (+ q (/ numerator denom))))
+
+(defun INVERT-IN-CIRCLE-2 (z q)
+  (let* ((qq (- q z))
+	 (numerator (* (abs qq) (abs qq)))
+	 (denom (- #c(0.0 0.0) (conjugate qq))))
+    (print (list numerator denom))
+    (+ q (+ qq (/ numerator denom)))))
+
+(defun TESTX (z zinv)
+  (let* ((zconj (conjugate z)))
+    (print (list (* zconj zinv) (+ zinv zconj)))
+    (/ (* zconj zinv) (+ zinv zconj))))
+
+(defun TESTY (z zinv)
+  (+ z (testx #c(0.0 0.0) (- zinv z))))
+
+	 
 
 (defun TEST-NEW (ez)
   (multiple-value-bind (hlb hla) (make-translators (cis (/ pi 8)) (cis (/ pi -8)) (cis (/ pi 6))  (cis (/ pi -6)) )
