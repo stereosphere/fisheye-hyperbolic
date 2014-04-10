@@ -38,7 +38,7 @@
 
 
 ;;;-----------------------------------------------------
-(defun ANIM-1 (tiles hla hlb)
+(defun ANIM-1 (tiles hla #chlb)
   (loop for hp in tiles
        for mhp in move-tiles
      do

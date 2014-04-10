@@ -145,6 +145,19 @@
 	(setf (swept-angle hl) (find-swept-angle e-center e-radius e-a e-b)))
       hl)))
 
+;;;----------------------------------------------------------------
+;;; make the h-line given center and radius of orthogonal circle
+;;; if p is at the origin, returns nil
+(defmethod MAKE-H-LINE-CENTER-RADIUS((center complex) r)
+  (when (/= center #c(0.0 0.0))
+    (let ((hl (make-instance 'h-line)))
+      (multiple-value-bind (a b) (circle-circle #c(0.0 0.0) 1.0 center r)
+	(calculate-h-line hl a b))  
+      (with-slots (e-center e-radius e-a e-b) hl
+	(setf (swept-angle hl) (find-swept-angle e-center e-radius e-a e-b)))
+      hl)))
+;;returns nil if center =#c(0.0 0.0)
+
 
 ;;;-----------------------------------------------------------------
 (defmethod POINTS-SENSE (h-point-list)

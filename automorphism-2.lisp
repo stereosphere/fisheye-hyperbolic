@@ -257,11 +257,15 @@
         ;;(print (list 'using-tan (angle-between tan0 tan1)))
         (angle-between tan0 tan1)))))
 
+;;(defmethod ORTHOGONAL-CIRCLE
+
+
+
 #|
 (defmethod H-CENTER ((center complex) r)
   (let* ((line-dir (abs center))
 	 (perp (complex (- imagpart line-dir) (realpart line-dir)))
-	 (intersect (line-circle center r center perp)))
-    |#   
+	 (intersect (line-circle center r center perp)))))
+|#   
 	
   

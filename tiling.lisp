@@ -98,12 +98,12 @@
     (print (get-points hpa))
     (file-w (list hpb hpa))))
 
-(defun TO-ORIGIN (ez)
-  (let* ((hp (/ 1.0 (e-h ez)))	 
-	 (httran (- hp))
-	 (translated (+ httran hp)))
-    (print (list hp httran))
-    (h-e translated)));;should invert here
+;; (defun TO-ORIGIN (ez)
+;;   (let* ((hp (/ 1.0 (e-h ez)))	 
+;; 	 (httran (- hp))
+;; 	 (translated (+ httran hp)))
+;;     (print (list hp httran))
+;;     (h-e translated)));;should invert here
 	
 
 ;;;---------
@@ -204,3 +204,57 @@
 	(print ba)
 	
 	(test-items cba cba-ba cba-ba-ba cba4 pit a-poly b-poly)))))
+
+
+;;;----------------------------------------------------------------
+;;;VCA p125
+(defun REFLECT-3 (a center radius)
+  (+ center (/ (* radius radius) (- (conjugate a) (conjugate center)))))
+
+
+;;;-----------------------------------------------------------------
+(defmethod REFLECT-2 ((r complex) center radius)
+  (let* ((dif (- r center))
+	 (factor (/ (* radius radius) (abs-squared dif)))
+	 (x (realpart (+ (realpart center) (* factor (realpart dif)))))
+	 (y (realpart (+ (imagpart center) (* factor (imagpart dif))))))
+        ;;(describe hl)
+        ;;(print (list 'dif dif 'rad radius 'factor factor 'x x 'y y))
+        (complex x y)))))
+
+;;;----------------------------------------------------------------
+;;;Visual Complex Analysis, p 179
+;;;origin #c(0.0 0.0) "O" on diagram
+;;;q = bar-a = center of orthogonal circle "?" on diagram
+(defun TO-ORIGIN (a)
+  (let* ((q (conjugate (/ 1.0 a)))
+	 (r (sqrt (- (abs-squared q) 1.0))))
+    (print (reflect-3 a q r))
+    (values q r)))
+
+;;;-----------------------------------------------------------------
+(defun WORKS (p q)
+  (let* ((fl (first-layer p q))
+	 (a  (first (get-points (first fl))))
+	 (fhp (make-fundamental-hp p q)))
+    fl fhp
+    (multiple-value-bind (c r) (to-origin a)
+      (let* ((hla (make-h-line-center-radius c r))
+	     (dir (/ a (abs a)))
+	     (dir90 (complex (- (imagpart dir)) (realpart dir)))
+	     (hl0 (make-h-line #c(0.0 0.0) dir90))
+	     (a-coords (get-h-line-pointsx hla))
+	     (b-coords (get-h-line-pointsx hl0))
+	     (a-poly (make-instance 'svg-polyline-item 
+				    :points a-coords))
+	     (b-poly (make-instance 'svg-polyline-item 
+				    :points b-coords))
+	     ;;(hps (loop for hp in fl
+	     ;;	     collect (translate-hp hp hla hl0)))
+	     (hp-list-item (make-instance 'svg-hp-list-item
+					  :hps (list (make-fundamental-hp p q)
+						     (translate-hp (copy-h-poly fhp) hl0 hlA)) ;; hps
+					  :color (svg-color 60 60 60))))
+	(file-wx (list a-poly b-poly hp-list-item))))))
+	
+	     
