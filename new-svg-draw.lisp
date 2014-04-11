@@ -104,6 +104,13 @@
      (list hpl a-poly b-poly circle))) 
    
 
+
+(defun CIRC (pos &optional (r 5))
+  (make-instance 'svg-circle-item
+		 :x (realpart pos)
+		 :Y (imagpart pos)
+		 :r r))
+
 ;;;-------------------------------------------------------------------------         
 (defun TEST-ITEMS (&rest items)
   ;;(multiple-value-bind (hla hlb) (make-translating-h-lines #c(1.0 0.0) 0.2)

@@ -11,7 +11,8 @@
       (unless pts
 	(multiple-value-bind (a b)
 	    (line-circle #c(0.0 0.0) 1.0 e-a (- e-a e-b))
-	  (setf pts (line-points a b 3))))
+	  (setf pts (line-points a b 3));;mistake? what was I thinking?
+	  (setf pts (line-points e-a e-b 6))))
       (loop for p in pts
 	 append (list (realpart p) (imagpart p))))))
 	   

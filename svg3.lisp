@@ -147,7 +147,7 @@
 
 ;;;-----------------------------------------------------------------------
 ;;;coords come in origin in center, so add 1.0 to x and y
-(defun SVG-CIRCLE (stream xx yy radius &optional (r 255) (g 0) (b 0))
+(defun SVG-CIRCLE (stream xx yy radius &optional (r (random 255)) (g (random 255)) (b (random 255)))
   (let ((x   (* *ssize/2* (+ xx 1.0)))
 	(y   (* *ssize/2* (+ yy 1.0)))
 	(sty (format nil "fill:rgb(~a, ~a, ~a)" r g b)))

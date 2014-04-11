@@ -194,7 +194,7 @@
 	     (a-coords (get-h-line-pointsx hla))
 	     (b-coords (get-h-line-pointsx hlb))
 	     (a-poly (make-instance 'svg-polyline-item 
-				    :points a-coords))
+				    :points a-coords))   
 	     (b-poly (make-instance 'svg-polyline-item 
 				    :points b-coords)))
 	;; (print (abs (- (e-h ba) (e-h ba-ba))))
@@ -220,7 +220,7 @@
 	 (y (realpart (+ (imagpart center) (* factor (imagpart dif))))))
         ;;(describe hl)
         ;;(print (list 'dif dif 'rad radius 'factor factor 'x x 'y y))
-        (complex x y)))))
+        (complex x y)))
 
 ;;;----------------------------------------------------------------
 ;;;Visual Complex Analysis, p 179
@@ -236,6 +236,7 @@
 (defun WORKS (p q)
   (let* ((fl (first-layer p q))
 	 (a  (first (get-points (first fl))))
+	 (b  (second (get-points (first fl))))
 	 (fhp (make-fundamental-hp p q)))
     fl fhp
     (multiple-value-bind (c r) (to-origin a)
@@ -249,12 +250,32 @@
 				    :points a-coords))
 	     (b-poly (make-instance 'svg-polyline-item 
 				    :points b-coords))
+	     (a-circle (make-instance 'svg-circle-item :x (realpart a) :y (imagpart a) :r 7))
+	     (c-circle   (make-instance 'svg-circle-item :x (realpart (reflect-3 a c r)) :y (imagpart (reflect-3 a c r)) :r 5))
+	     (b-circle   (make-instance 'svg-circle-item :x (realpart (reflect-3 b c r)) :y (imagpart (reflect-3 b c r)) :r 7))
+	     (bc-circle (make-instance 'svg-circle-item :x (realpart b) :y (imagpart b) :r 7))
 	     ;;(hps (loop for hp in fl
 	     ;;	     collect (translate-hp hp hla hl0)))
 	     (hp-list-item (make-instance 'svg-hp-list-item
 					  :hps (list (make-fundamental-hp p q)
-						     (translate-hp (copy-h-poly fhp) hl0 hlA)) ;; hps
-					  :color (svg-color 60 60 60))))
-	(file-wx (list a-poly b-poly hp-list-item))))))
-	
+						     (translate-hp (copy-h-poly fhp) hla hl0)) ;; hps
+					  :color (svg-color 60 60 60)))
+	     (circs (loop for p in (get-points fhp)
+		       collect (circ p 5)))
+	     (circs-x (loop for p in (get-points  (translate-hp (copy-h-poly fhp) hla hl0))
+			 collect (circ p 3)
+			 do
+			   (print (list '****** p)))))
+	       
+	(loop for hl across (h-lines (translate-hp (copy-h-poly fhp) hla hl0))
+	   do
+	     (describe hl))
+	        
+	hp-list-item a-circle b-circle c-circle bc-circle
+	(file-wx (append
 	     
+		  (list hp-list-item a-poly b-poly) ;; hp-list-item a-circle b-circle c-circle bc-circle)
+		  circs
+		  circs-x))))))
+
+
