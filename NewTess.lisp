@@ -106,7 +106,7 @@
 (defun DO-LAYER0 (prev-layer) 
   (print (list 'num-prev (length prev-layer)))
   (if (= (q (first prev-layer)) 3)
-      (do-layer0-q3 prev-layer)
+      (do-layer0-q3 prev-layer) ;;doesn't actually work
       (let* ((discard-count 0)
 	     (thresh 0.999) ;;;;;;;;0.995)
 	     (hps (loop for hp in prev-layer

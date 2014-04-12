@@ -84,7 +84,7 @@
       (background stream 255 255 255)
       (loop for hp in hp-list
 	 ;;for line-coords = (get-h-line-points (get-line hp (first-edge hp)))
-	 for coords = (get-polygon-pointsx hp t)
+	 for coords = (get-polygon-pointsx hp nil)
 	 ;;for coords = (get-polygon-equi-az-points hp) 
 	 ;;for center = (to-equi-az (center hp))
 	 for style-property = (getf (properties hp) :style)
@@ -118,7 +118,7 @@
 (defmethod SVG-HYPERBOLIC-TILING ((hp-list cons) stream)
   (let ((default-style (svg-color 80 80 80)))
     (loop for hp in hp-list
-       for coords = (get-polygon-pointsx hp t)
+       for coords = (get-polygon-pointsx hp nil)
        for style-property = (getf (properties hp) :style)
        for sty = (cond (style-property
 			style-property)

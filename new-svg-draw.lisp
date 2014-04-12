@@ -104,12 +104,27 @@
      (list hpl a-poly b-poly circle))) 
    
 
-
+;;;-------------------------------------------------------------------------
 (defun CIRC (pos &optional (r 5))
   (make-instance 'svg-circle-item
 		 :x (realpart pos)
 		 :Y (imagpart pos)
 		 :r r))
+
+;;;-------------------------------------------------------------------------
+(defun HPLI (hp-list &optional color)
+  (make-instance 'svg-hp-list-item
+		 :hps hp-list
+		 :color (if color
+			    color
+			    (svg-color 60 60 60))))
+
+  
+;;;-------------------------------------------------------------------------
+(defun DRAW-HL (hl)
+  (let* ((coords (get-h-line-pointsx hl)))
+    (make-instance 'svg-polyline-item 
+		   :points coords)))
 
 ;;;-------------------------------------------------------------------------         
 (defun TEST-ITEMS (&rest items)
