@@ -149,7 +149,7 @@
 ;;; make the h-line given center and radius of orthogonal circle
 ;;; if p is at the origin, returns nil
 (defmethod MAKE-H-LINE-CENTER-RADIUS((center complex) r)
-  (when (/= center #c(0.0 0.0))
+  (if (> (abs center) 1.0e-6)
     (let ((hl (make-instance 'h-line)))
       (multiple-value-bind (a b) (circle-circle #c(0.0 0.0) 1.0 center r)
 	(calculate-h-line hl a b))  
@@ -342,9 +342,9 @@
       (destructuring-bind (px py dx dy) (dismember (e-point hl) (e-direction hl))
         (let* ((dif (- r (e-point hl)))
                (factor (* 2.0 (dot-product (e-direction hl) dif))))
-	  (print (list 'r r))
-          (print (complex (+ (* 2.0 px) (* factor dx) (- rx))
-                   (+ (* 2.0 py) (* factor dy) (- ry))))))
+	  ;;(print (list 'r r))
+          (complex (+ (* 2.0 px) (* factor dx) (- rx))
+                   (+ (* 2.0 py) (* factor dy) (- ry)))))
       ;;else it's a circle
       (let* ((dif (- r (e-center hl)))
              (radius (e-radius hl))

@@ -126,6 +126,14 @@
     (make-instance 'svg-polyline-item 
 		   :points coords)))
 
+;;;-------------------------------------------------------------------------
+(defun DRAW-TEXT (pos label)
+  (make-instance 'svg-text-item 
+		 :x (+ 1.0 (realpart pos))
+		 :y (+ 1.0 (imagpart pos))
+		 :label label))
+
+
 ;;;-------------------------------------------------------------------------         
 (defun TEST-ITEMS (&rest items)
   ;;(multiple-value-bind (hla hlb) (make-translating-h-lines #c(1.0 0.0) 0.2)

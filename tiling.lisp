@@ -6,19 +6,44 @@
 
 ;;;--------------------------------------------------------------
 ;;; rotates about origin -- euclidean ok
-(defun E-ROTATE-HP (hp angle)
+(defun E-ROTATE-HPx (hp angle)
   (let ((rotator (cis angle)))
     ;;since rotation is about origin  ok to do euclidean rotation
     (loop for hl across (h-lines hp)
        for el across (equi-lines hp)
        do
-	 (setf (e-center el) (* rotator (e-center el)))
-	 (setf (e-center hl) (* rotator (e-center hl)))
-	 (setf (e-a el) (* rotator (e-a el)))
-	 (setf (e-b el) (* rotator (e-b el)))
-	 (setf (e-a hl) (* rotator (e-a hl)))
-	 (setf (e-b hl) (* rotator (e-b hl)))
+	 (if (is-straight hl)
+	     (progn
+	       (setf (e-a hl) (* rotator (e-a hl)))
+	       (setf (e-b hl) (* rotator (e-b hl)))
+	       (setf (e-a el) (* rotator (e-a el)))
+	       (setf (e-b el) (* rotator (e-b el)))  
+	       (modify-h-line hl (e-a hl) (e-b hl)))
+	     (progn
+	       (setf (e-center el) (* rotator (e-center el)))
+	       (setf (e-center hl) (* rotator (e-center hl)))
+	       (setf (e-a el) (* rotator (e-a el)))
+	       (setf (e-b el) (* rotator (e-b el)))
+	       (setf (e-a hl) (* rotator (e-a hl)))
+	       (setf (e-b hl) (* rotator (e-b hl)))))
 	 (modify-interior-region-line hl el))
+    hp))
+
+;;;--------------------------------------------------------------
+;;; rotates about origin -- euclidean ok
+(defun E-ROTATE-HP (hp angle)
+  (let ((rotator (cis angle)))
+    ;;since rotation is about origin ok to do euclidean rotation
+    (loop for hl across (h-lines hp)
+       for el across (equi-lines hp)
+       do
+(setf (e-center el) (* rotator (e-center el)))
+(setf (e-center hl) (* rotator (e-center hl)))
+(setf (e-a el) (* rotator (e-a el)))
+(setf (e-b el) (* rotator (e-b el)))
+(setf (e-a hl) (* rotator (e-a hl)))
+(setf (e-b hl) (* rotator (e-b hl)))
+(modify-interior-region-line hl el))
     hp))
 ;;;---------------------------------------------------------------
 ;;;place create and place the seed hp in its initial position and 

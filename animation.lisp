@@ -10,7 +10,7 @@
 (defmethod MAKE-TRANSLATING-H-LINES ((dir complex) (hdist double-float))
   (let* ((hla (make-h-line #c(0.0 0.0) dir)) 
          (dir90 (/ (dcomplex (- (imagpart dir)) (realpart dir)) (abs dir)))
-         (edist (realpart (h-e hdist)));;imagpart will be zero
+         (edist (abs (h-e hdist)));;imagpart will be zero
          (hlb (make-h-line-through-point (* dir90 edist))))
     ;;(print edist)
     (values hla hlb)))
@@ -112,8 +112,10 @@
 
 ;;;---------------------------------------------------------------------------  
 (defun DO-LAYERS-ANIM (fl n)
+  (print 'in-do-layers-anim)
   (let* ((layers0 fl)
 	 (layers1 layers0))
+    (print (list fl n))
     (loop for i from 0 below n
        for new-layers = (progn (print (list 'LAYER i)) 
 			       (do-layer0 layers0))

@@ -130,7 +130,11 @@
 						(t
 						 (- q 3)))
 				append
-				  (add-z hp start-edge num)))
+				  (add-z hp start-edge num)
+				  ))
+				;;do
+				;;  (print (list 'cw i num))))
+
 			   ;;ELSE
 			   (when *do-ccw*
 			     (loop for i from 0 below n-edges
@@ -144,7 +148,11 @@
 						(t
 						 (- q 3)))
 				append
-				  (add-z hp start-edge num))))
+				  (add-z hp start-edge num)
+				  )))
+				;;do
+				;;  (print (list 'ccw i num)))))
+
 		     do
 		     ;; (when (= 0 (mod n 18000))
 		     ;; 	 ;;(gc-and-report)

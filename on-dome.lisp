@@ -179,7 +179,7 @@
 ;;;(loop for x in '(1 2 3 4 5) collect (1+ x) into a collect x into b finally (return (list a b)))
 (defun ANIM-DOME (p q n &optional (name "a") (start-frame 1))
   (let* ((root-name (format nil "~a_~d~d~d" name p q n))
-	 (avconv-filename (format nil "/home/michael/SVG-FRAMES/Anim0/~a_%04d.png" root-name))
+	 (avconv-filename (format nil "c:/EMACS-SBCL/SVG-FRAMES/Anim0/~a_%04d.png" root-name))
 	 (step 0.005)
 	 (start-d (+ (* step (- start-frame 1)) 0.001)))
     start-d
@@ -209,23 +209,23 @@
 		  (hps (do-layers-anim fl n))
 		  ;;(point-lists (project-to-dome hps (make-x-rotate 0.0))) ;; no x rotate
 		  (style-point-lists (project-both hps 0.0 0.0));;(- (/ pi 4.0)) 0.0));;(- (/ pi 4.0))))
-		  (path (format nil "/home/michael/SVG-FRAMES/Anim0/~a_~4,'0d.svg" root-name fnum)))
+		  (path (format nil "C:/EMACS-SBCL/SVG-FRAMES/Anim0/~a_~4,'0d.svg" root-name fnum)))
 	     (format t " calculated ")
 	     (with-open-file (stream path
 				     :direction :output
 				     :if-exists :supersede)
 	       (svg-draw-point-lists+ stream style-point-lists nil nil)))) ;;hla hlb))))
 	 (format t " done~%~%"))
-    (sb-posix:chdir #p"/home/michael/SVG-FRAMES/Anim0")
+    (sb-posix:chdir #p"C:/EMACS-SBCL/SVG-FRAMES/Anim0")
     (convert-to-png root-name) 
     (print (concatenate 'string "/usr/bin/avconv " 
 			"-r " "30 "
 			"-i " avconv-filename 
 			"-b:v " "3000k " 
 			(concatenate 'string "../" root-name ".avi")))
-    (when (probe-file (format nil "/home/michael/SVG-FRAMES/~a.avi" root-name))
+    (when (probe-file (format nil "C:/EMACS-SBCL/SVG-FRAMES/~a.avi" root-name))
       (print 'deleting-old-avi)
-      (delete-file (format nil "/home/michael/SVG-FRAMES/~a.avi" root-name))) 
+      (delete-file (format nil "C:/EMACS-SBCL/SVG-FRAMES/~a.avi" root-name))) 
    (sb-ext:run-program "/usr/bin/avconv" 
 			(list "-r" "30"
 			      "-i" avconv-filename 
