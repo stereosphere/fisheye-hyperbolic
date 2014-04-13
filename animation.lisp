@@ -38,16 +38,16 @@
 
 
 ;;;-----------------------------------------------------
-(defun ANIM-1 (tiles hla hlb)
-  (loop for hp in tiles
-       for mhp in move-tiles
-     do
-       (loop for hl across (h-lines hp)
-	  for mhl across (h-lines mhp)
-	  for reflect1  = (reflect-hl0 hl mhl hlb)
-	  do
-	    (when reflect1
-	      (reflect-hl0 mhl mhl hla)))))
+;; (defun ANIM-1 (tiles hla hlb)
+;;   (loop for hp in tiles
+;;        for mhp in move-tiles
+;;      do
+;;        (loop for hl across (h-lines hp)
+;; 	  for mhl across (h-lines mhp)
+;; 	  for reflect1  = (reflect-hl0 hl mhl hlb)
+;; 	  do
+;; 	    (when reflect1
+;; 	      (reflect-hl0 mhl mhl hla))))) 
 
 ;;;---------------------------------------------------------------------------
 (defmethod MAKE-ROTATING-H-LINES ((ecenter complex) (angle double-float))
@@ -82,7 +82,7 @@
 	 do
 	   (setf (num-edges hp) 3)))
     (cons fhp hps)))
-
+ 
 ;;;-------------------------------------------------------------------------------------------
 ;;;doesn't work
 (defmethod FIRST-LAYER-ANIM-CENTER (p q hla hlb)
@@ -112,15 +112,13 @@
 
 ;;;---------------------------------------------------------------------------  
 (defun DO-LAYERS-ANIM (fl n)
-  (print 'in-do-layers-anim)
   (let* ((layers0 fl)
-	 (layers1 layers0))
-    (print (list fl n))
+	 (layers1 layers0)) 
     (loop for i from 0 below n
        for new-layers = (progn (print (list 'LAYER i)) 
 			       (do-layer0 layers0))
        do
-	 (print (list 'layer-length (length new-layers)))
+	 ;;(print (list 'layer-length (length new-layers)))
 	 (setf layers0 new-layers)
 	 (setf layers1 (append layers1 new-layers))
        while

@@ -91,7 +91,7 @@
 	 (step (find-loop-step fhp num-frames))
 	 (dirs (make-dirs name)))
     (loop for d from 0.1 by step ;;kluge! 0.0 not working
-       for fnum from 0 below num-frames
+       for fnum from 1 to num-frames
        do  
 	 ;;(garbage-collect fnum)
 	 (format t "~%~%doing frame ~d d=~5,3f ..." fnum d)
@@ -108,6 +108,24 @@
 				   :if-exists :supersede)   
 	     (svg-draw-point-lists+ stream style-point-lists nil nil))))))
 
+;;;-----------------------------------------------------------------
+(defun CONVERT-TO-PNG-2 (name)
+  (let ((dirs (make-dirs name)))
+    (sb-posix:chdir (png-dir dirs)) ;;must be in directory
+    (loop for f from 1
+       for input  = (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) name f)
+       for export = (format nil "--export-png=~a~a_~4,'0d.png" (png-dir dirs) name f)
+       while (probe-file input)
+       do
+	 (format t "~& ~d ~a ~a" f input export)
+       ;;(print input) (print export)))
+	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe"
+			     (list 
+			      "--export-width"  "1024"
+			      "--export-height" "1024"
+			      export ;;"--export-png=f_0001.png" 
+			      input))
+	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe" (list "--version")))))
 
 ;; ;;;-----------------------------------------------------------------------
 ;; (defun DO-ANIM (p q num-layers num-frames &OPTIONAL (name "a"))

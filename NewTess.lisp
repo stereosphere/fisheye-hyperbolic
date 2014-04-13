@@ -104,7 +104,7 @@
 (defparameter *DO-CCW* t)
 ;;;-------------------------------------------------------------------------------------------
 (defun DO-LAYER0 (prev-layer) 
-  (print (list 'num-prev (length prev-layer)))
+  ;;(print (list 'num-prev (length prev-layer)))
   (if (= (q (first prev-layer)) 3)
       (do-layer0-q3 prev-layer) ;;doesn't actually work
       (let* ((discard-count 0)
@@ -159,7 +159,7 @@
 		     ;; 	 (cl-user::gc :full t))
 		       (when (> dist-from-center thresh)
 			 (incf discard-count)))))
-	(print (list 'discarded discard-count 'len (length hps)))
+	;;(print (list 'discarded discard-count 'len (length hps)))
 	(unless hps
 	  (print "hps nil"))
 	hps)))
