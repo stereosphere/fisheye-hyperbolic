@@ -86,27 +86,27 @@
 
 ;;;-------------------------------------------------------------------
 (defun ANIM-TRANSLATE-LOOP (p q num-layers num-frames &optional (name "a"))
-  (let* ((fhp (initialize-seed p q))
+  (let* ((root-name (format nil "~a_~d~d~d" name p q num-layers))
+	 (fhp (initialize-seed p q))
 	 (fl (first-layer-2 fhp))
 	 (step (find-loop-step fhp num-frames))
-	 (dirs (make-dirs name)))
-    (loop for d from 0.1 by step ;;kluge! 0.0 not working
-       for fnum from 1 to num-frames
-       do  
-	 ;;(garbage-collect fnum)
-	 (format t "~%~%doing frame ~d d=~5,3f ..." fnum d)
-	 (multiple-value-bind (hla hlb) 
-	     (make-translating-h-lines (complex 1.0 0.0) (- d))
+	 (dirs (make-dirs root-name)))
+    (multiple-value-bind (hla hlb) 
+	(make-translating-h-lines (complex 1.0 0.0) (- step))
+      (loop for fnum from 1 to num-frames
+	 do  
+	   (garbage-collect fnum 10)
+	   (format t "~%~%doing frame ~d ..." fnum)
 	   (loop for hp in fl
 	      do
-		(translate-hp hp hla hlb)))
-	 (let* ((hps (do-layers-anim fl num-layers))
-		(style-point-lists (project-both hps 0.0 0.0))
-		(path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) name fnum)))
-	   (with-open-file (stream path
-				   :direction :output
-				   :if-exists :supersede)   
-	     (svg-draw-point-lists+ stream style-point-lists nil nil))))))
+		(translate-hp hp hla hlb))
+	   (let* ((hps (do-layers-anim fl num-layers))
+		  (style-point-lists (project-both hps 0.0 0.0))
+		  (path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) root-name fnum)))
+	     (with-open-file (stream path
+				     :direction :output
+				     :if-exists :supersede)   
+	       (svg-draw-point-lists+ stream style-point-lists hla hlb)))))))
 
 ;;;-----------------------------------------------------------------
 (defun CONVERT-TO-PNG-2 (name)
