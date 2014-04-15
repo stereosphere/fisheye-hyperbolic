@@ -25,4 +25,4 @@
 	       (:file "new-svg-draw")
 	       (:file "output")
 	       (:file "tiling")
-	       (:file "anim-2"))
+	       (:file "anim-2")))

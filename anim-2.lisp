@@ -70,7 +70,10 @@
 ;;;------------------------------------------------------------------
 ;;;finds the step size to make the animation loop
 (defun FIND-LOOP-STEP (hp num-frames)
-  (abs (/ (radius hp) (- num-frames 1))))
+  (let* ((points (get-points hp))
+	 (dist (abs (- (first points) (second points)))))
+    (abs (/ dist (- num-frames 1))))
+  (/ (e-h-dist 0.7071) num-frames)) ;0.7071 result of to-origin
 
 ;;;------------------------------------------------------------------
 ;;;garbage collect not sure why I need this	 
@@ -84,15 +87,41 @@
 	   ;;(room nil)
 	   (format t "~%~%")))
 
+;;;-----------------------------------------------------------------
+(defun CONVERT-TO-PNG-2 (name &optional (width 1024))
+  (let ((dirs (make-dirs name)))
+    (sb-posix:chdir (png-dir dirs)) ;;must be in directory
+    (loop for f from 1
+       for input  = (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) name f)
+       for export = (format nil "--export-png=~a~a_~4,'0d.png" (png-dir dirs) name f)
+       for wstr   = (prin1-to-string width);;(format nil "~d"  width)
+      while (probe-file input)
+       do
+	 (format t "~& ~d ~a ~a" f input export)
+       ;;(print input) (print export)))
+	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe"
+			     (list 
+			      "--export-width"  wstr
+			      "--export-height" wstr
+			      export ;;"--export-png=f_0001.png" 
+			      input))
+	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe" (list "--version")))))
+
+
 ;;;-------------------------------------------------------------------
 (defun ANIM-TRANSLATE-LOOP (p q num-layers num-frames &optional (name "a"))
   (let* ((root-name (format nil "~a_~d~d~d" name p q num-layers))
 	 (fhp (initialize-seed p q))
-	 (fl (first-layer-2 fhp))
 	 (step (find-loop-step fhp num-frames))
+	 (fl (first-layer-2 fhp))
 	 (dirs (make-dirs root-name)))
     (multiple-value-bind (hla hlb) 
-	(make-translating-h-lines (complex 1.0 0.0) (- step))
+	(make-translating-h-lines (complex 1.0 0.0) step)
+      ;;;translate fl back so that the first translation in the main loop
+      ;;;will initialize fl. Note "hlb hla".
+      (loop for hp in fl
+	 do
+	   (translate-hp hp hlb hla))
       (loop for fnum from 1 to num-frames
 	 do  
 	   (garbage-collect fnum 10)
@@ -106,26 +135,9 @@
 	     (with-open-file (stream path
 				     :direction :output
 				     :if-exists :supersede)   
-	       (svg-draw-point-lists+ stream style-point-lists hla hlb)))))))
+	       (svg-draw-point-lists+ stream style-point-lists hla hlb)))))
+    (convert-to-png-2 root-name 512)))
 
-;;;-----------------------------------------------------------------
-(defun CONVERT-TO-PNG-2 (name)
-  (let ((dirs (make-dirs name)))
-    (sb-posix:chdir (png-dir dirs)) ;;must be in directory
-    (loop for f from 1
-       for input  = (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) name f)
-       for export = (format nil "--export-png=~a~a_~4,'0d.png" (png-dir dirs) name f)
-       while (probe-file input)
-       do
-	 (format t "~& ~d ~a ~a" f input export)
-       ;;(print input) (print export)))
-	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe"
-			     (list 
-			      "--export-width"  "1024"
-			      "--export-height" "1024"
-			      export ;;"--export-png=f_0001.png" 
-			      input))
-	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe" (list "--version")))))
 
 ;; ;;;-----------------------------------------------------------------------
 ;; (defun DO-ANIM (p q num-layers num-frames &OPTIONAL (name "a"))

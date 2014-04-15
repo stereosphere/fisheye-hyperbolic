@@ -28,8 +28,8 @@
 
 ;;;-------------------------------------------------------------------------
 (defmethod GET-POLYGON-STYLE-POINTS-DOME (hp)
- (let* ((center-dist (abs (center hp)))
-	(color (rainbow-color center-dist)))
+ (let* (;;(center-dist (abs (center hp)))
+	(color (list 128 128 255)));;(rainbow-color center-dist)))
    (destructuring-bind (r g b) color
      ;;(print (list (abs (center hp)) (center hp) r g b))
      (let ((style (svg-color r g b))
