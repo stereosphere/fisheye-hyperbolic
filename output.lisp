@@ -6,7 +6,7 @@
 
 ;;;---------------------------------------------------------------------------------
 (defclass DIRS ()
-  ((root :initform (make-pathname :directory '(:absolute "home" "michael" "SVG-FRAMES")) :accessor root)
+  ((root :initform (make-pathname :device "c" :directory '( :absolute "EMACS-SBCL" "SVG-FRAMES")) :accessor root)
    (filename :initarg :filename :accessor filename)
    (anim-dir :initarg :top-dir :accessor anim-dir)
    (svg-dir :initarg :svg-dir :accessor svg-dir)
@@ -16,8 +16,7 @@
 (defun MAKE-DIRS (anim-name)
   (let ((dirs (make-instance 'dirs :filename anim-name)))
     (with-slots (root filename anim-dir svg-dir png-dir) dirs
-      (when (string-equal (sb-unix::posix-getenv "os") "Windows_NT")
-	(setf root (make-pathname :device "c" :directory '( :absolute "EMACS-SBCL" "SVG-FRAMES"))))
+      #+unix(setf root (make-pathname :directory '(:absolute "home" "michael" "SVG-FRAMES"))) 
       (setf filename anim-name)
       (setf anim-dir (merge-pathnames (make-pathname :directory (list :relative filename)) root))
       (setf svg-dir  (merge-pathnames #p"svg/" anim-dir))
