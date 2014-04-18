@@ -109,10 +109,11 @@
 
 
 ;;;-------------------------------------------------------------------
-(defun ANIM-TRANSLATE-LOOP (p q num-layers num-frames &optional (name "a"))
+(defun ANIM-TRANSLATE-LOOP (p q num-layers num-frames &optional (name "a") (loops 1))
   (let* ((root-name (format nil "~a_~d~d~d" name p q num-layers))
-	 (fhp (initialize-seed p q))
-	 (step (find-loop-step fhp num-frames))
+	 ;;(fhp (initialize-seed p q)) ;;;makes c_466, for example
+	 (fhp (make-fundamental-hp 4 6))
+	 (step (* loops (find-loop-step fhp num-frames)))
 	 (fl (first-layer-2 fhp))
 	 (dirs (make-dirs root-name)))
     (multiple-value-bind (hla hlb) 
