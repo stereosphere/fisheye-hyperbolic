@@ -161,7 +161,7 @@
 			 (incf discard-count)))))
 	;;(print (list 'discarded discard-count 'len (length hps)))
 	(unless hps
-	  (print "hps nil"))
+	  (format t "hps nil length prev-layer: ~d" (length prev-layer)))
 	hps)))
 
  

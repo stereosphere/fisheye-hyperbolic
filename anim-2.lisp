@@ -85,7 +85,7 @@
 	   ;;(cl-user::gc :full t) 
 	   ;;(format t "~%~%")
 	   ;;(room nil)
-	   (format t "~%~%")))
+	   (format t "~%")))
 
 ;;;-----------------------------------------------------------------
 (defun CONVERT-TO-PNG-2 (name &optional (width 1024))
@@ -121,21 +121,29 @@
       ;;;will initialize fl. Note "hlb hla".
       (loop for hp in fl
 	 do
-	   (translate-hp hp hlb hla))
-      (loop for fnum from 1 to num-frames
-	 do  
-	   (garbage-collect fnum 10)
-	   (format t "~%~%doing frame ~d ..." fnum)
-	   (loop for hp in fl
-	      do
-		(translate-hp hp hla hlb))
-	   (let* ((hps (do-layers-anim fl num-layers))
-		  (style-point-lists (project-both hps 0.0 0.0))
-		  (path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) root-name fnum)))
-	     (with-open-file (stream path
-				     :direction :output
-				     :if-exists :supersede)   
-	       (svg-draw-point-lists+ stream style-point-lists hla hlb)))))
+	   (translate-hp hp hlb hla))   
+
+      ;;;move to the side
+      #+ignore(multiple-value-bind (hlc hld) 
+	  (make-translating-h-lines (complex 10.0 1.0) 3.0)
+	(loop for hp in fl
+	   do
+	     (translate-hp hp hlc hld)))
+
+	(loop for fnum from 1 to num-frames
+	   do  
+	     (garbage-collect fnum 3)
+	     (format t "~%~%doing frame ~d ..." fnum)
+	     (loop for hp in fl
+		do
+		  (translate-hp hp hla hlb))
+	     (let* ((hps (do-layers-anim fl num-layers))
+		    (style-point-lists (project-both hps (/ pi -2.0) 0.0))
+		    (path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) root-name fnum)))
+	       (with-open-file (stream path
+				       :direction :output
+				       :if-exists :supersede)   
+		 (svg-draw-point-lists+ stream style-point-lists nil nil)))))
     (convert-to-png-2 root-name 512)))
 
 
