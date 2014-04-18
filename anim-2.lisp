@@ -89,7 +89,9 @@
 
 ;;;-----------------------------------------------------------------
 (defun CONVERT-TO-PNG-2 (name &optional (width 1024))
-  (let ((dirs (make-dirs name)))
+  (let ((exec-path "C:/Program Files (x86)/Inkscape/inkscape.exe")
+	(dirs (make-dirs name)))
+    #+unix(setf exec-path  "/usr/bin/inkscape")
     (sb-posix:chdir (png-dir dirs)) ;;must be in directory
     (loop for f from 1
        for input  = (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) name f)
@@ -99,13 +101,13 @@
        do
 	 (format t "~& ~d ~a ~a" f input export)
        ;;(print input) (print export)))
-	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe"
+	 (sb-ext:run-program exec-path
 			     (list 
 			      "--export-width"  wstr
 			      "--export-height" wstr
 			      export ;;"--export-png=f_0001.png" 
 			      input))
-	 (sb-ext:run-program "C:/Program Files (x86)/Inkscape/inkscape.exe" (list "--version")))))
+	 (sb-ext:run-program exec-path (list "--version")))))
 
 
 ;;;-------------------------------------------------------------------
