@@ -68,12 +68,14 @@
     hps))
 
 ;;;------------------------------------------------------------------
-;;;finds the step size to make the animation loop
-(defun FIND-LOOP-STEP (hp num-frames)
-  (let* ((points (get-points hp))
-	 (dist (abs (- (first points) (second points)))))
-    (abs (/ dist (- num-frames 1))))
-  (/ (e-h-dist 0.7071) num-frames)) ;0.7071 result of to-origin
+;;;finds the step size to make the animation loop from hpa to hpb
+(defun FIND-LOOP-DIST-DIR (hpa hpb num-frames)
+  (let* ((dif (- (center hpb) (center hpa)))
+	 (abs-dif (abs dif)))
+    (values (/ dif abs-dif) 
+	    (/ (e-h-dist abs-dif) 2.0 num-frames))))
+
+;;   (/ (e-h-dist 0.7071) num-frames)) ;0.7071 result of to-origin
 
 ;;;------------------------------------------------------------------
 ;;;garbage collect not sure why I need this	 
@@ -109,47 +111,86 @@
 			      input))
 	 (sb-ext:run-program exec-path (list "--version")))))
 
+;;;----------------------------------------------------------------------
+(defun MAKE-AVI (p q num-layers &optional (name "a"))
+  (let* ((root-name (format nil "~a_~d~d~d" name p q num-layers))
+	 (dirs (make-dirs root-name))
+	 (avconv-filename (format nil "~a~a_%04d.png" (png-dir dirs) root-name))
+	 (avi-filename (format nil "~a~a.avi" (anim-dir dirs) root-name)))
+    (print avconv-filename)
+    (print avi-filename)
+    (when (probe-file avi-filename)
+      (print 'deleting-old-avi)
+      (delete-file avi-filename))
+    (sb-ext:run-program "/usr/bin/avconv" 
+   			(list "-r" "30"
+   			      "-i" avconv-filename 
+   			      "-b:v" "3000k" 
+   			      avi-filename))))
 
 ;;;-------------------------------------------------------------------
 (defun ANIM-TRANSLATE-LOOP (p q num-layers num-frames &optional (name "a") (loops 1))
   (let* ((root-name (format nil "~a_~d~d~d" name p q num-layers))
-	 ;;(fhp (initialize-seed p q)) ;;;makes c_466, for example
-	 (fhp (make-fundamental-hp 4 6))
-	 (step (* loops (find-loop-step fhp num-frames)))
+	 ;;(fhp (initialize-seed p q)) 
+	 (fhp (make-fundamental-hp p q))
+	 (hp  (make-reflected-hp fhp 1))
 	 (fl (first-layer-2 fhp))
 	 (dirs (make-dirs root-name)))
-    (multiple-value-bind (hla hlb) 
-	(make-translating-h-lines (complex 1.0 0.0) step)
+    loops ;;squelch warning
+     (multiple-value-bind (dir dist)
+	(find-loop-dist-dir fhp hp num-frames)
+       (print (list 'dist dist))
+      (multiple-value-bind (hla hlb) 
+	  (make-translating-h-lines dir (* 2.0 dist));;;;;;;;;;;;;;;;;;;;;;;;
       ;;;translate fl back so that the first translation in the main loop
       ;;;will initialize fl. Note "hlb hla".
-      (loop for hp in fl
-	 do
-	   (translate-hp hp hlb hla))   
-
-      ;;;move to the side
-      #+ignore(multiple-value-bind (hlc hld) 
-	  (make-translating-h-lines (complex 10.0 1.0) 3.0)
 	(loop for hp in fl
 	   do
-	     (translate-hp hp hlc hld)))
-
+	     (translate-hp hp hlb hla))   
+      ;;;move to the side
+	#+ignore(multiple-value-bind (hlc hld) 
+		    (make-translating-h-lines (complex 10.0 1.0) 3.0)
+		  (loop for hp in fl
+		     do
+		       (translate-hp hp hlc hld)))
 	(loop for fnum from 1 to num-frames
 	   do  
 	     (garbage-collect fnum 3)
 	     (format t "~%~%doing frame ~d ..." fnum)
-	     (loop for hp in fl
-		do
-		  (translate-hp hp hla hlb))
+	     (when (> fnum 1) ;;first frame at initial position
+	       (loop for hp in fl
+		  do
+		    (translate-hp hp hla hlb)))
 	     (let* ((hps (do-layers-anim fl num-layers))
-		    (style-point-lists (project-both hps (/ pi -2.0) 0.0))
+		    (style-point-lists (project-both hps 0.0 0.0));;(/ pi -2.0) 0.0))
 		    (path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) root-name fnum)))
 	       (with-open-file (stream path
 				       :direction :output
 				       :if-exists :supersede)   
 		 (svg-draw-point-lists+ stream style-point-lists nil nil)))))
-    (convert-to-png-2 root-name 512)))
+      (convert-to-png-2 root-name 512))))
 
 
+;;;--------------------------------------------------------------------------
+(defun TEST-TRANSLATION ()
+  (let* ((root-name (format nil "~a_~d~d~d" "xxx" 4 6 0))
+	 (dirs (make-dirs root-name))
+	 (fhpa (make-fundamental-hp 4 6))
+	 (fhpb (make-fundamental-hp 4 6))
+	 (xx   (reflect (center fhpa) (aref (h-lines fhpa) 1))))
+    (multiple-value-bind (hla hlb) 
+	(make-translating-h-lines
+	 (/ xx (abs xx)) (/ (e-h-dist (abs xx)) 2.0))
+      (print (/ (e-h-dist (abs xx)) 2.0))
+      (translate-hp fhpa hla hlb)
+      (let* ((hps (list fhpa fhpb))
+	     (style-point-lists (project-both hps 0.0 0.0))
+	     (path (format nil "~a~a_~4,'0d.svg" 
+			   (svg-dir dirs) root-name 0)))
+	(with-open-file (stream path
+				:direction :output
+				:if-exists :supersede)   
+	  (svg-draw-point-lists+ stream style-point-lists hla hlb))))))
 ;; ;;;-----------------------------------------------------------------------
 ;; (defun DO-ANIM (p q num-layers num-frames &OPTIONAL (name "a"))
 ;;   (let* ((dirs (make-dirs name))
