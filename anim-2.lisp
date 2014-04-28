@@ -61,7 +61,7 @@
 			 (cons new-hp
 			       (reflect-about-edge new-hp 
 						   other-edge fhp-edge (- (q fhp) 3) nil))))))
-    (loop for hp in hps
+    #+ignore(loop for hp in hps
        with ang = (/ pi  (q fhp))
        do
 	 (e-rotate-hpx hp ang))
@@ -131,8 +131,8 @@
 ;;;-------------------------------------------------------------------
 (defun ANIM-TRANSLATE-LOOP (p q num-layers num-frames &optional (name "a") (loops 1))
   (let* ((root-name (format nil "~a_~d~d~d" name p q num-layers))
-	 ;;(fhp (initialize-seed p q)) 
-	 (fhp (make-fundamental-hp p q))
+	 (fhp (initialize-seed p q)) 
+	 ;;(fhp (make-fundamental-hp-2 p q))
 	 (hp  (make-reflected-hp fhp 1))
 	 (fl (first-layer-2 fhp))
 	 (dirs (make-dirs root-name)))
@@ -140,35 +140,33 @@
      (multiple-value-bind (dir dist)
 	(find-loop-dist-dir fhp hp num-frames)
        (print (list 'dist dist))
-      (multiple-value-bind (hla hlb) 
-	  (make-translating-h-lines dir (* 2.0 dist));;;;;;;;;;;;;;;;;;;;;;;;
-      ;;;translate fl back so that the first translation in the main loop
-      ;;;will initialize fl. Note "hlb hla".
-	(loop for hp in fl
-	   do
-	     (translate-hp hp hlb hla))   
-      ;;;move to the side
-	#+ignore(multiple-value-bind (hlc hld) 
-		    (make-translating-h-lines (complex 10.0 1.0) 3.0)
-		  (loop for hp in fl
-		     do
-		       (translate-hp hp hlc hld)))
-	(loop for fnum from 1 to num-frames
-	   do  
-	     (garbage-collect fnum 3)
-	     (format t "~%~%doing frame ~d ..." fnum)
-	     (when (> fnum 1) ;;first frame at initial position
-	       (loop for hp in fl
-		  do
-		    (translate-hp hp hla hlb)))
-	     (let* ((hps (do-layers-anim fl num-layers))
-		    (style-point-lists (project-both hps 0.0 0.0));;(/ pi -2.0) 0.0))
-		    (path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) root-name fnum)))
-	       (with-open-file (stream path
-				       :direction :output
-				       :if-exists :supersede)   
-		 (svg-draw-point-lists+ stream style-point-lists nil nil)))))
-      (convert-to-png-2 root-name 512))))
+       (multiple-value-bind (hla hlb) 
+	   (make-translating-h-lines dir (* 2.0 dist));;;;;;;;;;;;;;;;;;;;;;;;
+
+	 ;;move to the side
+	 #+ignore(multiple-value-bind (hlc hld) 
+		     (make-translating-h-lines (complex 10.0 1.0) 3.0)
+		   (loop for hp in fl
+		      do
+			(translate-hp hp hlc hld)))
+	 (loop for fnum from 1 to num-frames
+	    do  
+	      (garbage-collect fnum 3)
+	      (format t "~%~%doing frame ~d ..." fnum)	  
+	      (when (> fnum 1) ;;for the first frame, use the initial position
+		(loop for hp in fl
+		   do
+		     (translate-hp hp hla hlb)))
+	      (let* ((hps (do-layers-anim fl num-layers))
+		     (style-point-lists (project-both hps 0.0 0.0));;(/ pi -2.0) 0.0))
+		     ;;(style-point-lists (project-both (list fhp hp) 0.0 0.0));;(/ pi -2.0) 0.0))
+		     (path (format nil "~a~a_~4,'0d.svg" (svg-dir dirs) root-name fnum)))
+		(with-open-file (stream path
+					:direction :output
+					:if-exists :supersede)   
+		  (svg-draw-point-lists+ stream style-point-lists nil nil)))))
+       (convert-to-png-2 root-name 512)
+       (make-avi p q num-layers name))))
 
 
 ;;;--------------------------------------------------------------------------
